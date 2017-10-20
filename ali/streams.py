@@ -4,8 +4,109 @@ from fuel.datasets.toy import Spiral
 from fuel.schemes import ShuffledScheme
 from fuel.streams import DataStream
 
-from .datasets import TinyILSVRC2012, GaussianMixture
+from .datasets import TinyILSVRC2012, SVHN108, SVHN17, MNIST08, MNIST17, HANDBAGSSHOES, GaussianMixture, MNIST
 
+def create_handbags_shoes_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = HANDBAGSSHOES(('train',), sources=('features',))
+    valid_set = HANDBAGSSHOES(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
+
+def create_mnist_all_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = MNIST(('train',), sources=('features',))
+    valid_set = MNIST(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            2000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
+
+def create_mnist_08_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = MNIST08(('train',), sources=('features',))
+    valid_set = MNIST08(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            2000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
+
+def create_mnist_17_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = MNIST17(('train',), sources=('features',))
+    valid_set = MNIST17(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            2000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
+
+def create_svhn_108_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = SVHN108(('train',), sources=('features',))
+    valid_set = SVHN108(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
+
+def create_svhn_17_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = SVHN17(('train',), sources=('features',))
+    valid_set = SVHN17(('val',), sources=('features',))
+    main_loop_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            train_set.num_examples, batch_size, rng=rng))
+    train_monitor_stream = DataStream.default_stream(
+        train_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    valid_monitor_stream = DataStream.default_stream(
+        valid_set,
+        iteration_scheme=ShuffledScheme(
+            5000, monitoring_batch_size, rng=rng))
+    return main_loop_stream, train_monitor_stream, valid_monitor_stream
 
 def create_svhn_data_streams(batch_size, monitoring_batch_size, rng=None):
     train_set = SVHN(2, ('extra',), sources=('features',))
@@ -45,10 +146,9 @@ def create_cifar10_data_streams(batch_size, monitoring_batch_size, rng=None):
     return main_loop_stream, train_monitor_stream, valid_monitor_stream
 
 
-def create_celeba_data_streams(batch_size, monitoring_batch_size,
-                               sources=('features', ), rng=None):
-    train_set = CelebA('64', ('train',), sources=sources)
-    valid_set = CelebA('64', ('valid',), sources=sources)
+def create_celeba_data_streams(batch_size, monitoring_batch_size, rng=None):
+    train_set = CelebA('64', ('train',), sources=('features',))
+    valid_set = CelebA('64', ('valid',), sources=('features',))
     main_loop_stream = DataStream.default_stream(
         train_set,
         iteration_scheme=ShuffledScheme(

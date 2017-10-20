@@ -9,7 +9,6 @@ print("Using Backend: ", matplotlib.get_backend())
 
 import numpy as np
 import numpy.random as npr
-import matplotlib.pyplot as plt
 import theano
 from theano import tensor
 

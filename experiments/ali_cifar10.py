@@ -1,6 +1,8 @@
 import argparse
 import logging
-
+import datetime
+import sys
+import os
 from blocks.algorithms import Adam
 from blocks.bricks import LeakyRectifier, Logistic
 from blocks.bricks.conv import ConvolutionalSequence
@@ -15,6 +17,7 @@ from blocks.initialization import IsotropicGaussian, Constant
 from blocks.main_loop import MainLoop
 from blocks.model import Model
 from blocks.roles import INPUT
+from blocks.utils import reraise_as
 from theano import tensor
 
 from ali.algorithms import ali_algorithm
@@ -22,6 +25,8 @@ from ali.bricks import (ALI, GaussianConditional, DeterministicConditional,
                         XZJointDiscriminator, ConvMaxout)
 from ali.streams import create_cifar10_data_streams
 from ali.utils import get_log_odds, conv_brick, conv_transpose_brick, bn_brick
+from ali.backup_model import BackupModel, PlotLoss, PlotAccuracy
+from ali.miriam_logger import Logger
 
 BATCH_SIZE = 100
 MONITORING_BATCH_SIZE = 500
@@ -147,7 +152,7 @@ def create_models():
     return model, bn_model, bn_updates
 
 
-def create_main_loop(save_path):
+def create_main_loop(save_path, backup_path):
 
     model, bn_model, bn_updates = create_models()
     ali, = bn_model.top_bricks
@@ -176,6 +181,9 @@ def create_main_loop(save_path):
             monitored_variables, valid_monitor_stream, prefix="valid"),
         Checkpoint(save_path, after_epoch=True, after_training=True,
                    use_cpickle=True),
+        BackupModel(backup_path, save_path, every_n_epochs=500, after_training=True),
+        PlotLoss(backup_path, "ALI CIFAR-10", every_n_epochs=500, after_training=True),
+        PlotAccuracy(backup_path, "ALI CIFAR-10", every_n_epochs=500, after_training=True),
         ProgressBar(),
         Printing(),
     ]
@@ -185,9 +193,22 @@ def create_main_loop(save_path):
 
 
 if __name__ == "__main__":
+    # logging.basicConfig(level=logging.INFO)
+    # parser = argparse.ArgumentParser(description="Train ALI on CIFAR10")
+    # parser.add_argument("--save-path", type=str, default='ali_cifar10.tar',
+    #                     help="main loop save path")
+    # args = parser.parse_args()
+    # create_main_loop(args.save_path).run()
+
+    name = "ali_cifar10_%dlat" % NLAT
     logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(description="Train ALI on CIFAR10")
-    parser.add_argument("--save-path", type=str, default='ali_cifar10.tar',
+    sys.stdout = Logger(filename=os.path.join("MIRIAM_%s_%s.log" % (name, datetime.datetime.now().strftime("%Y-%m-%d_%H%M"))))
+    parser = argparse.ArgumentParser(description="Train ALI on CIFAR-10 %s" % name)
+    parser.add_argument("--save-path", type=str, default='/var/scratch/aiir-mh/%s.tar' % name,
                         help="main loop save path")
+    parser.add_argument("--backup-path", type=str, default='/var/scratch/aiir-mh/%s/' % name, help="backup save path")
     args = parser.parse_args()
-    create_main_loop(args.save_path).run()
+    try:
+        create_main_loop(args.save_path, args.backup_path).run()
+    except Exception as e:
+        reraise_as(Exception("Extra information", *e.args))

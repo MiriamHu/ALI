@@ -13,6 +13,73 @@ from fuel.utils import find_in_data_path
 
 from ali.utils import as_array
 
+class HANDBAGSSHOES(H5PYDataset):
+    """
+    The Handbags vs Shoes dataset.
+    """
+    filename = 'handbags_shoes.hdf5'
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(HANDBAGSSHOES, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
+
+class MNIST(H5PYDataset):
+    """
+    The MNIST all classes data sets
+    """
+    filename = "mnist_all.hdf5"
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(MNIST, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
+
+class MNIST08(H5PYDataset):
+    """
+    The MNIST 0,8 dataset
+    """
+    filename = 'mnist_0_8.hdf5'
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(MNIST08, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
+
+class MNIST17(H5PYDataset):
+    """
+    The MNIST 1,7 dataset
+    """
+    filename = 'mnist_1_7.hdf5'
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(MNIST17, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
+
+class SVHN108(H5PYDataset):
+    """ The SVHN 10,8 dataset
+
+    """
+    filename = 'svhn_10_8.hdf5'
+
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(SVHN108, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
+
+class SVHN17(H5PYDataset):
+    """ The SVHN 10,8 dataset
+
+    """
+    filename = 'svhn_1_7.hdf5'
+
+    def __init__(self, which_sets, **kwargs):
+        kwargs.setdefault("load_in_memory", False)
+        super(SVHN17, self).__init__(
+            file_or_path=find_in_data_path(self.filename),
+            which_sets=which_sets, **kwargs)
 
 class TinyILSVRC2012(H5PYDataset):
     """The Tiny ILSVRC2012 Dataset.
